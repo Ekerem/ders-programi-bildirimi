@@ -1,0 +1,275 @@
+[
+ {
+  "kod": "ALM",
+  "ad": "Almanca",
+  "kisaltma": [
+   "ALM",
+   "ALMANCA"
+  ],
+  "seviyeler": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "BED",
+  "ad": "Beden Eğitimi",
+  "kisaltma": [
+   "BED",
+   "BEDEN",
+   "BES",
+   "BEO",
+   "BEDEN EĞİTİMİ"
+  ],
+  "seviyeler": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "BIL",
+  "ad": "Bilişim Teknolojileri",
+  "kisaltma": [
+   "BİL",
+   "BIL",
+   "BTY",
+   "BİLİŞİM"
+  ],
+  "seviyeler": [
+   5,
+   6
+  ]
+ },
+ {
+  "kod": "FEN",
+  "ad": "Fen Bilimleri",
+  "kisaltma": [
+   "FEN",
+   "FB",
+   "FEN BİL"
+  ],
+  "seviyeler": [
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "GOR",
+  "ad": "Görsel Sanatlar",
+  "kisaltma": [
+   "GÖR",
+   "GOR",
+   "GÖRSEL",
+   "RES",
+   "GS"
+  ],
+  "seviyeler": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "HAY",
+  "ad": "Hayat Bilgisi",
+  "kisaltma": [
+   "HAY",
+   "HB",
+   "HAYAT"
+  ],
+  "seviyeler": [
+   1,
+   2,
+   3
+  ]
+ },
+ {
+  "kod": "KMY1",
+  "ad": "Kültür ve Medeniyetimize Yön Verenler I",
+  "kisaltma": [
+   "KMYV",
+   "KMY",
+   "KMYV1",
+   "KÜLTÜR VE MEDENİYET"
+  ],
+  "seviyeler": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "KMY2",
+  "ad": "Kültür ve Medeniyetimize Yön Verenler II",
+  "kisaltma": [
+   "KMYV2",
+   "KMY2"
+  ],
+  "seviyeler": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "MAT",
+  "ad": "Matematik",
+  "kisaltma": [
+   "MAT",
+   "MATEMATİK",
+   "MATEMATIK"
+  ],
+  "seviyeler": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "MUZ",
+  "ad": "Müzik",
+  "kisaltma": [
+   "MÜZ",
+   "MUZ",
+   "MÜZİK"
+  ],
+  "seviyeler": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "SOS",
+  "ad": "Sosyal Bilgiler",
+  "kisaltma": [
+   "SOS",
+   "SB",
+   "SOSYAL"
+  ],
+  "seviyeler": [
+   4,
+   5,
+   6,
+   7
+  ]
+ },
+ {
+  "kod": "INK",
+  "ad": "T.C. İnkılap Tarihi ve Atatürkçülük",
+  "kisaltma": [
+   "İNK",
+   "INK",
+   "İTA",
+   "İNKILAP",
+   "INKILAP"
+  ],
+  "seviyeler": [
+   8
+  ]
+ },
+ {
+  "kod": "TEK",
+  "ad": "Teknoloji ve Tasarım",
+  "kisaltma": [
+   "TEK",
+   "TT",
+   "TTS",
+   "TEKNOLOJİ"
+  ],
+  "seviyeler": [
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "TUR",
+  "ad": "Türkçe",
+  "kisaltma": [
+   "TÜR",
+   "TUR",
+   "TRK",
+   "TÜRKÇE",
+   "TURKCE"
+  ],
+  "seviyeler": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "CYI",
+  "ad": "Çoklu Yabancı Dil İngilizce",
+  "kisaltma": [],
+  "seviyeler": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "ING",
+  "ad": "İngilizce",
+  "kisaltma": [
+   "İNG",
+   "ING",
+   "İNGİLİZCE",
+   "INGILIZCE",
+   "YDİ"
+  ],
+  "seviyeler": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "kod": "IHV",
+  "ad": "İnsan Hakları, Vatandaşlık ve Demokrasi",
+  "kisaltma": [
+   "İHV",
+   "IHV",
+   "İHVD",
+   "IHVD"
+  ],
+  "seviyeler": [
+   4
+  ]
+ }
+]
