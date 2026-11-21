@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kazanım Bildir</title>
+<meta name="description" content="Haftalık ders programınıza göre MEB çerçeve yıllık planlarındaki öğrenme çıktılarını gösterir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --zemin:#FAF7F2; --kart:#FFFFFF; --yazi:#34302C; --soluk:#8C857D; --cizgi:#EEE8E0;
+  --vurgu:#5E9481; --vurgu-yazi:#FFFFFF; --bos:#F4F0EA; --bugun:#EEF5F1;
+  --p0:#CDEEDF; --p1:#FFDCC9; --p2:#E2D9F4; --p3:#CFE4F6; --p4:#FFEFB5;
+  --p5:#F7D3DE; --p6:#DBEAC7; --p7:#D3EFF1; --p8:#F2E0C8; --p9:#EAD5F0;
+  --golge:0 1px 2px rgba(52,48,44,.06),0 4px 14px rgba(52,48,44,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --zemin:#1C1B19; --kart:#262422; --yazi:#EDE8E1; --soluk:#A39B91; --cizgi:#3A3734;
+    --vurgu:#7FB8A2; --vurgu-yazi:#14221C; --bos:#2D2B28; --bugun:#26332D;
+    --p0:#2F5546; --p1:#61412F; --p2:#463C5E; --p3:#2E4A61; --p4:#5C5122;
+    --p5:#5E3442; --p6:#3D4F2C; --p7:#2A5254; --p8:#56462F; --p9:#523A5A;
+    --golge:none;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--zemin);color:var(--yazi)}
+body{font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.45;
+  padding:20px 16px 56px;max-width:920px;margin:0 auto;-webkit-tap-highlight-color:transparent}
+button,select,input{font:inherit;color:inherit}
+h1{font-size:28px;font-weight:800;margin:0;letter-spacing:-.3px}
+.ust{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ust .btn{flex:none;padding:8px 12px}
+.alt-baslik{color:var(--soluk);font-size:14px;margin:2px 0 14px}
+.btn{border:0;border-radius:14px;padding:10px 14px;background:var(--bos);cursor:pointer;font-weight:700;font-size:14px;
+  min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:filter .15s,transform .05s}
+.btn:hover{filter:brightness(.97)} .btn:active{transform:scale(.98)}
+.btn.vurgu{background:var(--vurgu);color:var(--vurgu-yazi)}
+.sekmeler{display:flex;gap:6px;background:var(--bos);padding:4px;border-radius:16px;margin-bottom:14px}
+.sekme{flex:1;border:0;background:transparent;border-radius:12px;padding:10px;font-weight:700;cursor:pointer;color:var(--soluk);min-height:44px}
+.sekme[aria-selected="true"]{background:var(--kart);color:var(--yazi);box-shadow:var(--golge)}
+.kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:20px;padding:16px 12px;margin-bottom:14px;box-shadow:var(--golge)}
+.kart h2{font-size:17px;margin:0 0 4px;font-weight:800}
+.ipucu{color:var(--soluk);font-size:13px;margin:0 0 10px}
+.siradaki{border:0}
+.siradaki .ne{font-size:12px;font-weight:800;letter-spacing:.4px;opacity:.7}
+.siradaki .ad{font-size:22px;font-weight:800;margin:2px 0 6px}
+ul.ciktilar{margin:6px 0 0;padding-left:20px} ul.ciktilar li{margin:3px 0}
+/* tablo */
+.tablo-sar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.program{border-collapse:separate;border-spacing:3px;width:100%;table-layout:fixed}
+.program th{font-size:13px;color:var(--soluk);font-weight:800;padding:6px 0;border-radius:10px}
+.program th.bugun{background:var(--vurgu);color:var(--vurgu-yazi)}
+.program th.saat{width:12%}
+.program td.saat{text-align:center;color:var(--soluk);font-size:12px;line-height:1.2}
+.program td.saat b{display:block;font-size:13px}
+.hucre{height:56px;border-radius:12px;background:var(--bos);border:0;width:100%;padding:2px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;line-height:1.15;overflow:hidden}
+.hucre.bugunsut{background:var(--bugun)}
+.hucre .s{font-weight:800}
+.hucre .d{font-size:11px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.hucre.dolu{color:var(--yazi)}
+.hucre.simdi{outline:2px solid var(--yazi);outline-offset:-2px}
+.araclar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:12px}
+/* gezgin */
+.secimler{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:12px}
+select,input[type=text],input[type=time]{width:100%;border:1px solid var(--cizgi);background:var(--kart);border-radius:12px;padding:10px 12px;min-height:44px}
+label{font-size:13px;color:var(--soluk);font-weight:700;display:block;margin:10px 0 4px}
+.hafta-serit{display:flex;align-items:center;background:var(--bos);border-radius:14px;margin:4px 0 10px}
+.hafta-serit.bu{background:var(--p0)}
+.ok{border:0;background:transparent;font-size:28px;line-height:1;color:var(--vurgu);padding:6px 16px 10px;cursor:pointer;min-width:52px;min-height:48px}
+.ok:disabled{opacity:.25;cursor:default}
+.hafta-ad{flex:1;text-align:center;cursor:pointer;padding:6px 0}
+.hafta-ad b{display:block;font-size:15px} .hafta-ad span{font-size:13px;color:var(--soluk)}
+.tema{font-weight:800;font-size:14px}
+.konu{color:var(--soluk);font-size:14px;margin-top:2px}
+.surec{white-space:pre-line;color:var(--soluk);font-size:13px;margin-top:10px;border-top:1px dashed var(--cizgi);padding-top:8px}
+/* pencere */
+dialog{border:0;border-radius:22px;padding:0;background:var(--kart);color:var(--yazi);width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 32px)}
+dialog::backdrop{background:rgba(20,18,16,.45)}
+.pencere{padding:18px 18px 14px;display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
+.pencere h3{margin:0;font-size:20px;font-weight:800}
+.pencere .zaman{color:var(--soluk);font-size:13px;margin:2px 0 10px}
+.pencere .kaydir{overflow:auto;flex:1;min-height:80px}
+.pencere .alt{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap} .pencere .alt .btn{flex:1}
+.yukleniyor{color:var(--soluk);padding:20px 0;text-align:center}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--yazi);color:var(--zemin);padding:10px 16px;border-radius:12px;
+  font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100vw - 32px);z-index:20}
+.toast.goster{opacity:1}
+.imza{position:fixed;right:12px;bottom:8px;font-size:11px;opacity:.45;pointer-events:none;z-index:10}
+.gizli{display:none!important}
+@media (max-width:420px){ .program th{font-size:12px} .hucre{height:52px;font-size:13px} .program td.saat{font-size:10.5px} .program td.saat b{font-size:12px} h1{font-size:24px} }
+</style>
+</head>
+<body>
+<header class="ust">
+  <div>
+    <h1>Kazanım Bildir</h1>
+    <p class="alt-baslik" id="altBaslik">&nbsp;</p>
+  </div>
+  <button class="btn" id="guncelleBtn" title="Uygulamanın yeni sürümünü kontrol et">🔄 Güncelle</button>
+</header>
+
+<nav class="sekmeler" role="tablist">
+  <button class="sekme" role="tab" id="sekmeProgram" aria-selected="true">🗓️ Programım</button>
+  <button class="sekme" role="tab" id="sekmeGezgin" aria-selected="false">📚 Plan gezgini</button>
+</nav>
+
+<main>
+  <section id="bolumProgram">
+    <div class="kart siradaki" id="siradaki"></div>
+    <div class="kart">
+      <h2>Haftalık program</h2>
+      <p class="ipucu">Derse dokunun: haftanın çıktıları · Boş kutuya dokunun: ders ekleyin</p>
+      <div class="tablo-sar"><table class="program" id="tablo"></table></div>
+      <div class="araclar">
+        <button class="btn" id="dersEkleBtn" style="background:var(--p0)">＋ Ders ekle</button>
+        <button class="btn" id="zilBtn" style="background:var(--p4)">⏰ Zil saatleri</button>
+        <button class="btn" id="bildirimBtn" style="background:var(--p3)">🔔 Bildirimleri aç</button>
+      </div>
+      <p class="ipucu" id="bildirimNot" style="margin:10px 0 0"></p>
+    </div>
+  </section>
+
+  <section id="bolumGezgin" class="gizli">
+    <div class="kart">
+      <h2>Plan gezgini</h2>
+      <p class="ipucu">Ders ve sınıf seçin; haftalar arasında ‹ › ile gezinin.</p>
+      <div class="secimler">
+        <select id="gzDers" aria-label="Ders"></select>
+        <select id="gzSinif" aria-label="Sınıf düzeyi"></select>
+      </div>
+      <div id="gzIcerik"></div>
+    </div>
+  </section>
+</main>
+
+<dialog id="pencere"><div class="pencere" id="pencereIc"></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+<div class="imza">Made by Us</div>
+
+<script>
+'use strict';
+const APP_VERSION = '1.0.0';
+const VERI = 'https://raw.githubusercontent.com/Ekerem/ders-programi-bildirimi/main/';
+const SURUM_ADRESI = 'version.json';
+const GUNLER = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+const GUN_KISA = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const VARSAYILAN_ZIL = ['08:30','09:20','10:10','11:00','11:50','13:00','13:50','14:40'];
+const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+/* ---------- küçük yardımcılar ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function oku(k, v){ try { const x = localStorage.getItem('kb_' + k); return x == null ? v : JSON.parse(x); } catch(e){ return v; } }
+function yaz(k, v){ try { localStorage.setItem('kb_' + k, JSON.stringify(v)); } catch(e){} }
+let toastZ;
+function toast(m){ const t = $('toast'); t.textContent = m; t.classList.add('goster'); clearTimeout(toastZ); toastZ = setTimeout(() => t.classList.remove('goster'), 3200); }
+const gunStr = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+const tarihOku = s => { const [y,m,g] = s.split('-').map(Number); return new Date(y, m-1, g); };
+const pazartesi = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return x; };
+const dk = s => { const [h,m] = s.split(':').map(Number); return h*60 + m; };
+
+/* ---------- veri ---------- */
+let DERSLER = [], TAKVIM = [];
+const planOnbellek = {};
+async function jsonAl(yol){
+  const r = await fetch(VERI + yol + '?t=' + Math.floor(Date.now()/600000), { cache: 'no-cache' });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+async function plan(kod, sev){
+  const k = kod + '_' + sev;
+  if (!planOnbellek[k]) planOnbellek[k] = jsonAl('plans/' + k + '.json').catch(e => { delete planOnbellek[k]; throw e; });
+  return planOnbellek[k];
+}
+const dersAdi = kod => (DERSLER.find(d => d.kod === kod) || {}).ad || kod;
+const dersKisa = kod => { const d = DERSLER.find(x => x.kod === kod); if (!d) return kod; const k = (d.kisaltma||[]).find(x => x.length <= 4); return k || d.ad.split(' ')[0].slice(0,5); };
+const planVar = (kod, sev) => { const d = DERSLER.find(x => x.kod === kod); return !!d && d.seviyeler.includes(Number(sev)); };
+function haftaBul(p, tarih){
+  const pz = gunStr(pazartesi(tarih));
+  return p.findIndex(h => gunStr(pazartesi(tarihOku(h.bas))) === pz);
+}
+function okulHaftasi(tarih){
+  const pz = gunStr(pazartesi(tarih));
+  const h = TAKVIM.find(h => gunStr(pazartesi(tarihOku(h.bas))) === pz);
+  return h ? h.hafta : null;
+}
+
+/* ---------- ders programı (bu tarayıcıda saklanır) ---------- */
+let dersler = oku('dersler', []);   // {gun:1-7, ders:1.., sinif:'5-A', seviye:5, kod:'MAT'}
+let zil = oku('zil', VARSAYILAN_ZIL);
+const kaydet = () => yaz('dersler', dersler);
+const renkler = ['--p0','--p1','--p2','--p3','--p4','--p5','--p6','--p7','--p8','--p9'];
+function renkAnahtari(){
+  const kodlar = [...new Set(dersler.map(d => d.kod))];
+  const dereGore = kodlar.length > 1;
+  const anahtarlar = [...new Set(dersler.map(d => dereGore ? d.kod : d.sinif))].sort();
+  return d => 'var(' + renkler[Math.max(0, anahtarlar.indexOf(dereGore ? d.kod : d.sinif)) % renkler.length] + ')';
+}
+
+/* ---------- ana ekran ---------- */
+function ustBilgi(){
+  const b = new Date();
+  const h = okulHaftasi(b);
+  $('altBaslik').textContent = b.getDate() + ' ' + AYLAR[b.getMonth()] + ' ' + GUNLER[(b.getDay()+6)%7] + '  ·  ' +
+    (h ? h + '. hafta' : 'tatil / plan dışı hafta');
+}
+
+function tabloCiz(){
+  const t = $('tablo');
+  const bugun = (new Date().getDay() + 6) % 7 + 1;
+  const simdiDk = new Date().getHours()*60 + new Date().getMinutes();
+  let simdiSatir = 0;
+  zil.forEach((z,i) => { if (simdiDk >= dk(z) && simdiDk < dk(z) + 40) simdiSatir = i + 1; });
+  const gunSayisi = Math.max(5, ...dersler.map(d => d.gun));
+  const satirSayisi = Math.min(12, Math.max(zil.length, 6, ...dersler.map(d => d.ders + (d.blok||1) - 1)));
+  const renk = renkAnahtari();
+  const hucre = {};
+  dersler.forEach((d,i) => { for (let k = 0; k < (d.blok||1); k++) hucre[d.gun*100 + d.ders + k] ??= i; });
+  let h = '<thead><tr><th class="saat"></th>';
+  for (let g = 1; g <= gunSayisi; g++) h += '<th class="' + (g === bugun ? 'bugun' : '') + '">' + GUN_KISA[g-1] + '</th>';
+  h += '</tr></thead><tbody>';
+  for (let s = 1; s <= satirSayisi; s++){
+    h += '<tr><td class="saat"><b>' + s + '.</b>' + esc(zil[s-1] || '') + '</td>';
+    for (let g = 1; g <= gunSayisi; g++){
+      const i = hucre[g*100 + s];
+      const simdi = g === bugun && s === simdiSatir;
+      if (i != null){
+        const d = dersler[i];
+        h += '<td><button class="hucre dolu' + (simdi ? ' simdi' : '') + '" style="background:' + renk(d) + '" data-i="' + i + '" aria-label="' +
+          esc(GUNLER[g-1] + ' ' + s + '. ders ' + d.sinif + ' ' + dersAdi(d.kod)) + '"><span class="s">' + esc(d.sinif) +
+          '</span><span class="d">' + esc(dersKisa(d.kod)) + '</span></button></td>';
+      } else {
+        h += '<td><button class="hucre' + (g === bugun ? ' bugunsut' : '') + (simdi ? ' simdi' : '') + '" data-g="' + g + '" data-s="' + s +
+          '" aria-label="' + esc(GUNLER[g-1] + ' ' + s + '. ders: boş, ders ekle') + '"></button></td>';
+      }
+    }
+    h += '</tr>';
+  }
+  t.innerHTML = h + '</tbody>';
+}
+
+function siradakiBul(){
+  if (!dersler.length) return null;
+  const simdi = new Date();
+  let en = null;
+  dersler.forEach(d => {
+    for (let ek = 0; ek <= 7; ek++){
+      const gun = new Date(simdi.getFullYear(), simdi.getMonth(), simdi.getDate() + ek);
+      if (((gun.getDay()+6)%7)+1 !== d.gun) continue;
+      const z = zil[d.ders-1]; if (!z) break;
+      const bas = new Date(gun); bas.setHours(...z.split(':').map(Number), 0, 0);
+      const bit = new Date(bas.getTime() + 40*60000*(d.blok||1));
+      if (bit > simdi){ if (!en || bas < en.bas) en = { d, bas, devam: bas <= simdi }; break; }
+    }
+  });
+  return en;
+}
+
+async function siradakiCiz(){
+  const k = $('siradaki');
+  const s = siradakiBul();
+  if (!s){
+    k.style.background = 'var(--kart)';
+    k.innerHTML = '<h2>Hoş geldiniz 👋</h2><p style="margin:4px 0 0">Haftalık tablodaki boş kutulara dokunarak derslerinizi ekleyin. ' +
+      'Her derste o haftanın MEB çerçeve yıllık planındaki öğrenme çıktısı burada görünür. ' +
+      'Ders programınız yalnızca bu tarayıcıda saklanır.</p>';
+    return;
+  }
+  const { d, bas, devam } = s;
+  k.style.background = renkAnahtari()(d);
+  const saat = String(bas.getHours()).padStart(2,'0') + ':' + String(bas.getMinutes()).padStart(2,'0');
+  const bugun = new Date(); const yarin = new Date(bugun.getFullYear(), bugun.getMonth(), bugun.getDate()+1);
+  const ne = devam ? 'ŞU AN' : 'SIRADAKİ · ' + (gunStr(bas) === gunStr(bugun) ? 'BUGÜN' : gunStr(bas) === gunStr(yarin) ? 'YARIN' : GUNLER[d.gun-1].toLocaleUpperCase('tr')) + ' ' + saat;
+  k.innerHTML = '<div class="ne">' + esc(ne) + '</div><div class="ad">' + esc(d.sinif + '  ' + dersAdi(d.kod)) + '</div><div id="sCikti" class="yukleniyor" style="text-align:left;padding:0">Yükleniyor…</div>';
+  k.onclick = () => dersDetay(dersler.indexOf(d));
+  k.style.cursor = 'pointer';
+  try {
+    if (!planVar(d.kod, d.seviye)) { $('sCikti').textContent = d.seviye + '. sınıf ' + dersAdi(d.kod) + ' için yıllık plan yok.'; return; }
+    const p = await plan(d.kod, d.seviye);
+    const i = haftaBul(p, bas);
+    const el = $('sCikti'); if (!el) return;
+    el.className = '';
+    if (i < 0) { el.textContent = 'Bu hafta planda yok (tatil).'; return; }
+    const h = p[i];
+    el.innerHTML = '<div class="konu" style="color:inherit;opacity:.8">' + esc(h.hafta + '. hafta' + (h.konu ? ' · ' + h.konu : '')) + '</div>' +
+      '<ul class="ciktilar">' + h.ciktilar.map(c => '<li>' + esc(c) + '</li>').join('') + '</ul>';
+  } catch(e){ const el = $('sCikti'); if (el) el.textContent = 'Plan yüklenemedi. İnternet bağlantınızı kontrol edin.'; }
+}
+
+function ciz(){ ustBilgi(); tabloCiz(); siradakiCiz(); bildirimKur(); }
+
+/* ---------- hafta gösterimi (pencere ve gezgin ortak) ---------- */
+function haftaGoster(kap, p, bas){
+  let sec = bas;
+  const buIdx = haftaBul(p, new Date());
+  function goster(){
+    if (!p.length){ kap.innerHTML = '<p class="yukleniyor">Plan bulunamadı.</p>'; return; }
+    const h = p[sec];
+    kap.innerHTML =
+      '<div class="hafta-serit' + (sec === buIdx ? ' bu' : '') + '">' +
+        '<button class="ok" data-y="-1" aria-label="Önceki hafta"' + (sec <= 0 ? ' disabled' : '') + '>‹</button>' +
+        '<div class="hafta-ad" title="Bu haftaya dön"><b>' + h.hafta + '. Hafta' + (sec === buIdx ? ' · bu hafta' : '') + '</b><span>' + esc(h.tarih) + '</span></div>' +
+        '<button class="ok" data-y="1" aria-label="Sonraki hafta"' + (sec >= p.length-1 ? ' disabled' : '') + '>›</button>' +
+      '</div>' +
+      (h.tema ? '<div class="tema">' + esc(h.tema) + '</div>' : '') +
+      (h.konu ? '<div class="konu">' + esc(h.konu) + '</div>' : '') +
+      '<ul class="ciktilar">' + h.ciktilar.map(c => '<li>' + esc(c) + '</li>').join('') + '</ul>' +
+      (h.surec ? '<div class="surec"><b>Süreç bileşenleri / açıklama</b>\n' + esc(h.surec) + '</div>' : '');
+    kap.querySelectorAll('.ok').forEach(b => b.onclick = () => { sec = Math.min(p.length-1, Math.max(0, sec + Number(b.dataset.y))); goster(); });
+    kap.querySelector('.hafta-ad').onclick = () => { if (buIdx >= 0){ sec = buIdx; goster(); } };
+  }
+  goster();
+}
+function baslangicHaftasi(p){
+  const b = haftaBul(p, new Date());
+  if (b >= 0) return b;
+  const bugun = gunStr(new Date());
+  const i = p.findIndex(h => h.bit >= bugun);
+  return i >= 0 ? i : p.length - 1;
+}
+
+/* ---------- pencereler ---------- */
+const pencere = $('pencere'), ic = $('pencereIc');
+function ac(html){ ic.innerHTML = html; pencere.showModal(); }
+function kapat(){ pencere.close(); }
+pencere.addEventListener('click', e => { if (e.target === pencere) kapat(); });
+
+async function dersDetay(i){
+  const d = dersler[i]; if (!d) return;
+  ac('<h3>' + esc(d.sinif + '  ' + dersAdi(d.kod)) + '</h3>' +
+     '<div class="zaman">' + esc(GUNLER[d.gun-1] + ' · ' + d.ders + '. ders · ' + (zil[d.ders-1] || '') + ((d.blok||1) > 1 ? ' · ' + d.blok + ' saat' : '')) + '</div>' +
+     '<div class="kaydir" id="pHafta"><p class="yukleniyor">Yükleniyor…</p></div>' +
+     '<div class="alt"><button class="btn" id="pDuz" style="background:var(--p3)">Düzenle</button>' +
+     '<button class="btn" id="pSil" style="background:var(--p5)">Sil</button>' +
+     '<button class="btn" id="pKapat">Kapat</button></div>');
+  $('pKapat').onclick = kapat;
+  $('pDuz').onclick = () => dersFormu(i);
+  $('pSil').onclick = () => { if (confirm(d.sinif + ' ' + GUNLER[d.gun-1] + ' dersi silinsin mi?')){ dersler.splice(i,1); kaydet(); kapat(); ciz(); } };
+  const kap = $('pHafta');
+  if (!planVar(d.kod, d.seviye)){ kap.innerHTML = '<p>' + esc(d.seviye + '. sınıf ' + dersAdi(d.kod)) + ' için yıllık plan yok.</p>'; return; }
+  try { const p = await plan(d.kod, d.seviye); haftaGoster(kap, p, baslangicHaftasi(p)); }
+  catch(e){ kap.innerHTML = '<p>Plan yüklenemedi. İnternet bağlantınızı kontrol edin.</p>'; }
+}
+
+function secenekler(liste, secili){ return liste.map(([v,t]) => '<option value="' + esc(v) + '"' + (String(v) === String(secili) ? ' selected' : '') + '>' + esc(t) + '</option>').join(''); }
+
+function dersFormu(i, onGun, onDers){
+  const m = i != null ? dersler[i] : null;
+  const son = oku('sonDers', { kod: 'MAT', sinif: '5-A' });
+  const d = m || { gun: onGun || 1, ders: onDers || 1, sinif: son.sinif, kod: son.kod, seviye: parseInt(son.sinif) || 5, blok: 1 };
+  ac('<h3>' + (m ? 'Dersi düzenle' : 'Ders ekle') + '</h3>' +
+    '<div class="kaydir">' +
+    '<label for="fGun">Gün</label><select id="fGun">' + secenekler(GUNLER.map((g,k) => [k+1, g]), d.gun) + '</select>' +
+    '<label for="fDers">Kaçıncı ders</label><select id="fDers">' + secenekler(Array.from({length: Math.max(zil.length, 10)}, (_,k) => [k+1, (k+1) + '. ders' + (zil[k] ? ' (' + zil[k] + ')' : '')]), d.ders) + '</select>' +
+    '<label for="fBlok">Süre</label><select id="fBlok">' + secenekler([[1,'1 saat'],[2,'2 saat (art arda)'],[3,'3 saat']], d.blok||1) + '</select>' +
+    '<label for="fSinif">Sınıf (ör. 5-A)</label><input type="text" id="fSinif" value="' + esc(d.sinif) + '" autocomplete="off">' +
+    '<label for="fKod">Ders</label><select id="fKod">' + secenekler(DERSLER.map(x => [x.kod, x.ad]), d.kod) + '</select>' +
+    '<label for="fSev">Sınıf düzeyi</label><select id="fSev"></select>' +
+    '</div><div class="alt"><button class="btn vurgu" id="fKaydet">' + (m ? 'Kaydet' : 'Ekle') + '</button><button class="btn" id="fVazgec">Vazgeç</button></div>');
+  const sevDoldur = () => {
+    const kod = $('fKod').value, s = $('fSev').value || d.seviye;
+    $('fSev').innerHTML = secenekler(Array.from({length:12}, (_,k) => [k+1, (k+1) + '. sınıf' + (planVar(kod, k+1) ? '  ✓ plan var' : '')]), s);
+  };
+  sevDoldur();
+  $('fKod').onchange = sevDoldur;
+  $('fSinif').oninput = () => { const n = parseInt($('fSinif').value); if (n >= 1 && n <= 12) $('fSev').value = n; };
+  $('fVazgec').onclick = kapat;
+  $('fKaydet').onclick = () => {
+    const yeni = { gun: +$('fGun').value, ders: +$('fDers').value, blok: +$('fBlok').value,
+      sinif: $('fSinif').value.trim().toLocaleUpperCase('tr') || 'Sınıf', kod: $('fKod').value, seviye: +$('fSev').value };
+    if (m) dersler[i] = yeni; else dersler.push(yeni);
+    dersler.sort((a,b) => a.gun - b.gun || a.ders - b.ders);
+    kaydet(); yaz('sonDers', { kod: yeni.kod, sinif: yeni.sinif });
+    kapat(); ciz();
+    if (!planVar(yeni.kod, yeni.seviye)) toast(yeni.seviye + '. sınıf ' + dersAdi(yeni.kod) + ' için yıllık plan yok.');
+  };
+}
+
+function zilFormu(){
+  ac('<h3>Zil saatleri</h3><div class="zaman">Her dersin başlangıç saati</div><div class="kaydir" id="zilListe">' +
+     Array.from({length: Math.max(zil.length, 8)}, (_,k) => '<label for="z' + k + '">' + (k+1) + '. ders</label><input type="time" id="z' + k + '" value="' + esc(zil[k] || '') + '">').join('') +
+     '</div><div class="alt"><button class="btn vurgu" id="zKaydet">Kaydet</button><button class="btn" id="zVazgec">Vazgeç</button></div>');
+  $('zVazgec').onclick = kapat;
+  $('zKaydet').onclick = () => {
+    const yeni = [];
+    for (let k = 0; $('z' + k); k++){ const v = $('z' + k).value; if (!v) break; yeni.push(v); }
+    if (!yeni.length){ toast('En az bir saat girin.'); return; }
+    zil = yeni; yaz('zil', zil); kapat(); ciz();
+  };
+}
+
+/* ---------- tarayıcı bildirimleri (sayfa açıkken) ---------- */
+let bildirimZ = [];
+function bildirimDurum(){
+  const n = $('bildirimNot'), b = $('bildirimBtn');
+  if (!('Notification' in window)){ b.classList.add('gizli'); n.textContent = 'Bu tarayıcı bildirimleri desteklemiyor. Saatinize bildirim için Kazanım Bildir Android uygulamasını kullanın.'; return; }
+  if (Notification.permission === 'granted'){ b.textContent = '🔔 Bildirimler açık'; n.textContent = 'Sayfa açıkken ders başında bildirim gelir. Sayfa kapalıyken ve akıllı saatte bildirim için Android uygulamasını kullanın.'; }
+  else if (Notification.permission === 'denied'){ n.textContent = 'Bildirim izni tarayıcı ayarlarından kapatılmış.'; }
+  else n.textContent = 'Sayfa açıkken ders başında bildirim almak için açın.';
+}
+function bildirimKur(){
+  bildirimZ.forEach(clearTimeout); bildirimZ = [];
+  bildirimDurum();
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const simdi = new Date(), bugun = (simdi.getDay()+6)%7 + 1;
+  dersler.filter(d => d.gun === bugun && zil[d.ders-1]).forEach(d => {
+    const bas = new Date(); bas.setHours(...zil[d.ders-1].split(':').map(Number), 0, 0);
+    const ms = bas - simdi;
+    if (ms <= 0 || ms > 16*3600000) return;
+    bildirimZ.push(setTimeout(async () => {
+      let metin = d.seviye + '. sınıf ' + dersAdi(d.kod);
+      try { const p = await plan(d.kod, d.seviye); const i = haftaBul(p, new Date()); if (i < 0) return; metin = p[i].ciktilar.join('\n'); } catch(e){}
+      try { new Notification(d.sinif + ' ' + dersAdi(d.kod), { body: metin, tag: 'kb' + d.gun + d.ders }); } catch(e){}
+    }, ms));
+  });
+}
+
+/* ---------- plan gezgini ---------- */
+function gezginKur(){
+  const s = oku('gezgin', { kod: 'MAT', sev: 5 });
+  $('gzDers').innerHTML = secenekler(DERSLER.map(x => [x.kod, x.ad]), s.kod);
+  const sevDoldur = () => {
+    const d = DERSLER.find(x => x.kod === $('gzDers').value) || DERSLER[0];
+    const eski = Number($('gzSinif').value) || s.sev;
+    $('gzSinif').innerHTML = secenekler(d.seviyeler.map(v => [v, v + '. sınıf']), d.seviyeler.includes(eski) ? eski : d.seviyeler[0]);
+  };
+  sevDoldur();
+  $('gzDers').onchange = () => { sevDoldur(); gezginCiz(); };
+  $('gzSinif').onchange = gezginCiz;
+}
+async function gezginCiz(){
+  const kod = $('gzDers').value, sev = $('gzSinif').value, kap = $('gzIcerik');
+  yaz('gezgin', { kod, sev: +sev });
+  kap.innerHTML = '<p class="yukleniyor">Yükleniyor…</p>';
+  try { const p = await plan(kod, sev); haftaGoster(kap, p, baslangicHaftasi(p)); }
+  catch(e){ kap.innerHTML = '<p class="yukleniyor">Plan yüklenemedi. İnternet bağlantınızı kontrol edin.</p>'; }
+}
+
+/* ---------- sekmeler ---------- */
+function sekme(ad){
+  const prog = ad === 'program';
+  $('sekmeProgram').setAttribute('aria-selected', prog); $('sekmeGezgin').setAttribute('aria-selected', !prog);
+  $('bolumProgram').classList.toggle('gizli', !prog); $('bolumGezgin').classList.toggle('gizli', prog);
+  if (!prog && !$('gzIcerik').innerHTML) gezginCiz();
+  yaz('sekme', ad);
+}
+$('sekmeProgram').onclick = () => sekme('program');
+$('sekmeGezgin').onclick = () => sekme('gezgin');
+
+/* ---------- güncelleme ---------- */
+const yeniMi = (a, b) => { const x = a.split('.').map(Number), y = b.split('.').map(Number); for (let i = 0; i < 3; i++){ if ((x[i]||0) !== (y[i]||0)) return (x[i]||0) > (y[i]||0); } return false; };
+$('guncelleBtn').onclick = async () => {
+  const b = $('guncelleBtn'); b.disabled = true; b.textContent = '⏳ Kontrol ediliyor…';
+  try {
+    const r = await fetch(SURUM_ADRESI + '?t=' + Date.now(), { cache: 'no-store' });
+    const v = await r.json();
+    for (const k in planOnbellek) delete planOnbellek[k];
+    if (yeniMi(v.version, APP_VERSION)){
+      toast('Yeni sürüm bulundu (' + v.version + '), yükleniyor…');
+      setTimeout(() => location.replace(location.pathname + '?v=' + Date.now()), 700);
+      return;
+    }
+    DERSLER = await jsonAl('plans/dersler.json');
+    ciz();
+    toast('Uygulama güncel ✓  Planlar yenilendi.');
+  } catch(e){
+    toast('Güncelleme denetlenemedi. İnternet bağlantınızı kontrol edin.');
+  } finally { b.disabled = false; b.textContent = '🔄 Güncelle'; }
+};
+
+/* ---------- olaylar ---------- */
+$('tablo').addEventListener('click', e => {
+  const h = e.target.closest('.hucre'); if (!h) return;
+  if (h.dataset.i != null) dersDetay(+h.dataset.i); else dersFormu(null, +h.dataset.g, +h.dataset.s);
+});
+$('dersEkleBtn').onclick = () => dersFormu(null);
+$('zilBtn').onclick = zilFormu;
+$('bildirimBtn').onclick = async () => {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted'){ toast('Bildirimler zaten açık.'); return; }
+  try { await Notification.requestPermission(); } catch(e){}
+  bildirimKur();
+};
+
+/* ---------- başlat ---------- */
+(async function(){
+  try {
+    [DERSLER, TAKVIM] = await Promise.all([jsonAl('plans/dersler.json'), jsonAl('takvim.json')]);
+    DERSLER.sort((a,b) => a.ad.localeCompare(b.ad, 'tr'));
+  } catch(e){
+    $('siradaki').innerHTML = '<h2>Planlar yüklenemedi</h2><p>İnternet bağlantınızı kontrol edip sayfayı yenileyin.</p>';
+  }
+  gezginKur();
+  ciz();
+  if (oku('sekme', 'program') === 'gezgin') sekme('gezgin');
+  setInterval(() => { ustBilgi(); tabloCiz(); siradakiCiz(); }, 60000);
+})();
+
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

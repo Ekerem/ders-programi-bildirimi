@@ -1,4 +1,8 @@
-# Ders Programı Bildirimi — plan dosyaları
+# Kazanım Bildir — web sürümü ve plan dosyaları
+
+**Web sürümü:** https://ekerem.github.io/ders-programi-bildirimi/ (`index.html`, `sw.js`, `version.json`). Haftalık ders programına göre o haftanın öğrenme çıktılarını gösterir; ders programı tarayıcıda saklanır, plan dosyaları bu depodan okunur.
+
+## Plan dosyaları
 
 Bu depo, **Ders Programı Bildirimi** Android uygulamasının internetten güncellediği dosyaları tutar.
 Uygulamada **Ayarlar → 🔄 Planları güncelle** düğmesine basıldığında aşağıdaki dosyalar indirilir.
